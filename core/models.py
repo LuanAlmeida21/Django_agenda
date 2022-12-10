@@ -7,7 +7,6 @@ from django.contrib.auth.models import User
 #auto_now = add date current into field
 #CASCADE = se o usuario for deletado, exclui todos os eventos dele
 
-
 class Evento(models.Model):
     titulo = models.CharField(max_length=100)
     descricao = models.TextField(blank=True, null=True)
@@ -21,4 +20,7 @@ class Evento(models.Model):
     #retorna o nome do evento igual ao titulo
     def __str__(self):
         return self.titulo
+
+    def get_data_evento(self):
+        return self.data_evento.strftime('%d/%m/%Y %H:%M Hrs')
         
