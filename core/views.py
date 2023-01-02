@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 
-# Create your views here.
+# Create your views here
 
 def login_user(request):
     return render(request, 'login.html')
@@ -35,19 +35,42 @@ def lista_eventos(request):
 
 @login_required(login_url='/login/')
 def evento(request):
-    return render(request, 'evento.html')
+    id_evento = request.GET.get('id')
+    dados = {}
+    if id_evento:
+        dados['evento'] = Evento.objects.get(id=id_evento)
+    return render(request, 'evento.html', dados)
 
 def submit_evento(request):
     if request.POST:
         titulo = request.POST.get('titulo')
         data_evento = request.POST.get('data_evento')
         descricao = request.POST.get('descricao')
+        local = request.POST.get('local')
+        id_evento = request.POST.get('id_evento')
         usuario = request.user
-        Evento.objects.create(titulo=titulo,
-                            data_evento=data_evento,
-                            descricao=descricao,
-                            usuario=usuario)
+        if id_evento:
+            evento = Evento.objects.get(id=id_evento)
+            if evento.usuario == usuario:
+                evento.titulo = titulo
+                evento.data_evento = data_evento
+                evento.descricao = descricao
+                evento.local = local
+                evento.save()
+        else:
+            Evento.objects.create(titulo=titulo,
+                                data_evento=data_evento,
+                                local=local,
+                                descricao=descricao,
+                                usuario=usuario)
         
     return redirect('/')
 
+@login_required(login_url='/login/')
+def delete_evento(request, id_evento):
+    usuario = request.user
+    evento = Evento.objects.get(id=id_evento)
+    if usuario == evento.usuario:
+        evento.delete()
 
+    return redirect('/')
