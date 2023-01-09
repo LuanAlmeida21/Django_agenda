@@ -5,6 +5,7 @@
     <div style='color:#f79418'>
         <form action='submit' method='POST'> {% csrf_token %}
             <label>Título:</label>
+            <input type='number' name='id_evento' value='{{evento.id}}' hidden>
             <br>
             <input type='text' name='titulo' size='18' value={{evento.titulo}}>
             <br>

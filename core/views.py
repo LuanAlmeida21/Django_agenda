@@ -81,3 +81,11 @@ def delete_evento(request, id_evento):
     else:
         raise Http404()
     return redirect('/')
+    
+@login_required(login_url='/login/')    
+def historico_evento(request):
+    usuario = request.user
+    data_atual = datetime.now()
+    evento = Evento.objects.filter(usuario=usuario, data_evento__lt=data_atual)
+    dados = {'eventos': evento}
+    return render(request, 'historico.html', dados)
